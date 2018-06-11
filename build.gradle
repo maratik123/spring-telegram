@@ -1,0 +1,45 @@
+buildscript {
+    repositories {
+        mavenCentral()
+        jcenter()
+    }
+}
+
+plugins {
+    id 'com.github.spotbugs' version '1.6.1'
+    id 'net.researchgate.release' version '2.6.0'
+}
+
+group 'name.maratik.cw.eu'
+version = version
+
+repositories {
+    mavenCentral()
+    jcenter()
+}
+
+apply plugin: 'java'
+apply plugin: 'com.github.spotbugs'
+apply plugin: 'net.researchgate.release'
+
+sourceCompatibility = 1.8
+
+wrapper {
+    gradleVersion = '4.7'
+    distributionType = 'ALL'
+}
+
+configurations {
+    compile.exclude group: 'com.vaadin.external.google', module: 'android-json'
+}
+
+dependencies {
+    compile 'org.telegram:telegrambots:3.6.1'
+    compile 'com.google.guava:guava:25.1-jre'
+    compile 'org.springframework:spring-context:5.0.6.RELEASE'
+    compile 'org.apache.logging.log4j:log4j-api:2.10.0'
+}
+
+spotbugs {
+    toolVersion = '3.1.3'
+}
