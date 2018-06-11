@@ -10,7 +10,7 @@ plugins {
     id 'net.researchgate.release' version '2.6.0'
 }
 
-group 'name.maratik.cw.eu'
+group 'name.maratik'
 version = version
 
 repositories {
