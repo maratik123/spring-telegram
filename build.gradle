@@ -30,7 +30,7 @@ dependencies {
     compile 'org.telegram:telegrambots:3.6.1'
     compile 'com.google.guava:guava:25.1-jre'
     compile 'org.springframework:spring-context:5.0.6.RELEASE'
-    compile 'org.apache.logging.log4j:log4j-api:2.10.0'
+    compile 'org.apache.logging.log4j:log4j-api:2.11.0'
 }
 
 spotbugs {
