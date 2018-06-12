@@ -55,6 +55,13 @@ public abstract class TelegramBotService implements AutoCloseable {
 
     private String patternCommandSuffix = DEFAULT_PATTERN_COMMAND_SUFFIX;
 
+    /**
+     *
+     * @param api initialized telegram bots api
+     * @param embeddedValueResolver properties and SPeL resolver
+     * @param patternCommandSuffix suffix for commands starts with {@code /do_some_*}.
+     *                            Default value is {@link TelegramBotService#DEFAULT_PATTERN_COMMAND_SUFFIX}
+     */
     public TelegramBotService(
         TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver, String patternCommandSuffix
     ) {
@@ -82,16 +89,16 @@ public abstract class TelegramBotService implements AutoCloseable {
             .build();
     }
 
+    public TelegramBotService(TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver) {
+        this(api, embeddedValueResolver, DEFAULT_PATTERN_COMMAND_SUFFIX);
+    }
+
     public String getPatternCommandSuffix() {
         return patternCommandSuffix;
     }
 
     public void setPatternCommandSuffix(String patternCommandSuffix) {
         this.patternCommandSuffix = patternCommandSuffix;
-    }
-
-    public TelegramBotService(TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver) {
-        this(api, embeddedValueResolver, DEFAULT_PATTERN_COMMAND_SUFFIX);
     }
 
     @SuppressWarnings("WeakerAccess")
