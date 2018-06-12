@@ -1,4 +1,4 @@
-package maratik.name.spring.telegram.util;
+package name.maratik.spring.telegram.util;
 
 import java.util.Optional;
 import java.util.OptionalInt;

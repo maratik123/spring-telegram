@@ -1,4 +1,4 @@
-package maratik.name.spring.telegram.model;
+package name.maratik.spring.telegram.model;
 
 /**
  * Telegram bot command descriptor.

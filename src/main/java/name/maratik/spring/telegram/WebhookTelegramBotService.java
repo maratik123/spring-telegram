@@ -1,6 +1,7 @@
-package maratik.name.spring.telegram;
+package name.maratik.spring.telegram;
 
-import maratik.name.spring.telegram.config.TelegramBotBuilder;
+import name.maratik.spring.telegram.config.TelegramBotBuilder;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;

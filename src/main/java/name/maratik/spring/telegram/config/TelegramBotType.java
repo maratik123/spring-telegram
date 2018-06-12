@@ -1,8 +1,8 @@
-package maratik.name.spring.telegram.config;
+package name.maratik.spring.telegram.config;
 
-import maratik.name.spring.telegram.LongPollingTelegramBotService;
-import maratik.name.spring.telegram.TelegramBotService;
-import maratik.name.spring.telegram.WebhookTelegramBotService;
+import name.maratik.spring.telegram.LongPollingTelegramBotService;
+import name.maratik.spring.telegram.TelegramBotService;
+import name.maratik.spring.telegram.WebhookTelegramBotService;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.telegram.telegrambots.TelegramBotsApi;
 

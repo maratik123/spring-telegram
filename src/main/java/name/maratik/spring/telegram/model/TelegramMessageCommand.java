@@ -1,4 +1,6 @@
-package maratik.name.spring.telegram.model;
+package name.maratik.spring.telegram.model;
+
+import name.maratik.spring.telegram.util.Util;
 
 import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.api.objects.Update;
@@ -7,7 +9,7 @@ import org.telegram.telegrambots.api.objects.User;
 import java.util.Optional;
 import java.util.OptionalLong;
 
-import static maratik.name.spring.telegram.util.Util.optionalOf;
+import static name.maratik.spring.telegram.util.Util.optionalOf;
 
 /**
  * Telegram bot command splitted by command and arguments.
@@ -68,7 +70,7 @@ public class TelegramMessageCommand {
      * User ID, from whom this forward is originated.
      */
     public OptionalLong getForwardedFrom() {
-        return optionalOf(forwardedFrom);
+        return Util.optionalOf(forwardedFrom);
     }
 
     @Override

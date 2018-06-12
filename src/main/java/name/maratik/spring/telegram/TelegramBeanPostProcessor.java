@@ -1,10 +1,11 @@
-package maratik.name.spring.telegram;
+package name.maratik.spring.telegram;
 
-import maratik.name.spring.telegram.annotation.TelegramBot;
-import maratik.name.spring.telegram.annotation.TelegramCommand;
-import maratik.name.spring.telegram.annotation.TelegramForward;
-import maratik.name.spring.telegram.annotation.TelegramHelp;
-import maratik.name.spring.telegram.annotation.TelegramMessage;
+import name.maratik.spring.telegram.annotation.TelegramBot;
+import name.maratik.spring.telegram.annotation.TelegramForward;
+import name.maratik.spring.telegram.annotation.TelegramHelp;
+import name.maratik.spring.telegram.annotation.TelegramMessage;
+import name.maratik.spring.telegram.annotation.TelegramCommand;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;

@@ -1,4 +1,4 @@
-package maratik.name.spring.telegram.config;
+package name.maratik.spring.telegram.config;
 
 /**
  * Builder for Telegram Bot API. Should be provided as bean.

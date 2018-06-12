@@ -1,4 +1,4 @@
-package maratik.name.spring.telegram.config;
+package name.maratik.spring.telegram.config;
 
 import org.springframework.beans.factory.annotation.Qualifier;
 

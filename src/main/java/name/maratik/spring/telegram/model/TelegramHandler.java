@@ -1,6 +1,6 @@
-package maratik.name.spring.telegram.model;
+package name.maratik.spring.telegram.model;
 
-import maratik.name.spring.telegram.annotation.TelegramCommand;
+import name.maratik.spring.telegram.annotation.TelegramCommand;
 
 import java.lang.reflect.Method;
 import java.util.Optional;

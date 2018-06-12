@@ -1,6 +1,6 @@
-package maratik.name.spring.telegram.annotation;
+package name.maratik.spring.telegram.annotation;
 
-import maratik.name.spring.telegram.config.TelegramBotConfiguration;
+import name.maratik.spring.telegram.config.TelegramBotConfiguration;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.Documented;

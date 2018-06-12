@@ -1,4 +1,4 @@
-package maratik.name.spring.telegram.annotation;
+package name.maratik.spring.telegram.annotation;
 
 import org.springframework.core.annotation.AliasFor;
 

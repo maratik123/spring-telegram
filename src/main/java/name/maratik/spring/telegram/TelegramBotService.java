@@ -1,12 +1,17 @@
-package maratik.name.spring.telegram;
+package name.maratik.spring.telegram;
+
+import name.maratik.spring.telegram.annotation.TelegramForward;
+import name.maratik.spring.telegram.annotation.TelegramHelp;
+import name.maratik.spring.telegram.annotation.TelegramMessage;
+import name.maratik.spring.telegram.model.TelegramBotCommand;
+import name.maratik.spring.telegram.model.TelegramMessageCommand;
+import name.maratik.spring.telegram.util.Util;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import maratik.name.spring.telegram.annotation.TelegramCommand;
-import maratik.name.spring.telegram.annotation.TelegramForward;
-import maratik.name.spring.telegram.model.TelegramBotCommand;
-import maratik.name.spring.telegram.model.TelegramHandler;
-import maratik.name.spring.telegram.model.TelegramMessageCommand;
+import name.maratik.spring.telegram.annotation.TelegramCommand;
+import name.maratik.spring.telegram.model.TelegramHandler;
+
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
@@ -32,7 +37,7 @@ import java.util.OptionalLong;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
 
-import static maratik.name.spring.telegram.util.Util.optionalOf;
+import static name.maratik.spring.telegram.util.Util.optionalOf;
 
 /**
  * Telegram Bot Service.
@@ -116,7 +121,7 @@ public abstract class TelegramBotService implements AutoCloseable {
         }
         TelegramMessageCommand command = new TelegramMessageCommand(update);
         Optional<TelegramHandler> optionalCommandHandler;
-        OptionalLong userKey = optionalOf(update.getMessage().getChatId());
+        OptionalLong userKey = Util.optionalOf(update.getMessage().getChatId());
         Handlers handlers = getOrDefault(userKey);
 
         if (command.getForwardedFrom().isPresent()) {
@@ -247,7 +252,7 @@ public abstract class TelegramBotService implements AutoCloseable {
     }
 
     /**
-     * Add {@link maratik.name.spring.telegram.annotation.TelegramMessage} handler.
+     * Add {@link TelegramMessage} handler.
      */
     @SuppressWarnings("WeakerAccess")
     public void addDefaultMessageHandler(Object bean, Method method, OptionalLong userId) {
@@ -316,7 +321,7 @@ public abstract class TelegramBotService implements AutoCloseable {
     }
 
     /**
-     * Handler for {@link maratik.name.spring.telegram.annotation.TelegramHelp} method.
+     * Handler for {@link TelegramHelp} method.
      */
     @SuppressWarnings("WeakerAccess")
     public void addHelpPrefixMethod(Object bean, Method method, OptionalLong userId) {
