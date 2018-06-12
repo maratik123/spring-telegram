@@ -3,7 +3,7 @@ plugins {
     id 'net.researchgate.release' version '2.6.0'
 }
 
-group 'name.maratik'
+group 'com.github.maratik123'
 version = version
 
 repositories {
