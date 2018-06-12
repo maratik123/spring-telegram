@@ -17,6 +17,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
 /**
+ * Long polling implementation of Telegram Bot Service.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class LongPollingTelegramBotService extends TelegramBotService implements AutoCloseable {

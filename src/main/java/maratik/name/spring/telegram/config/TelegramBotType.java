@@ -7,9 +7,13 @@ import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.telegram.telegrambots.TelegramBotsApi;
 
 /**
+ * Telegram Bot type.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public enum TelegramBotType {
+    /**
+     * Use long polling mode.
+     */
     LONG_POLLING {
         @Override
         public TelegramBotService createService(
@@ -18,6 +22,9 @@ public enum TelegramBotType {
             return new LongPollingTelegramBotService(botBuilder, api, embeddedValueResolver);
         }
     },
+    /**
+     * Use webhook mode.
+     */
     WEBHOOK {
         @Override
         public TelegramBotService createService(
@@ -27,6 +34,9 @@ public enum TelegramBotType {
         }
     };
 
+    /**
+     * Creates TelegramBotService bean.
+     */
     public abstract TelegramBotService createService(
         TelegramBotBuilder botBuilder, TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver
     );

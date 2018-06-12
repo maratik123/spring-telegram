@@ -7,6 +7,7 @@ import org.springframework.context.support.MessageSourceAccessor;
 import org.springframework.lang.NonNull;
 
 /**
+ * Helper is used for localization. Can be inherited by user. Or used as "loc" bean solely.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class Localizable implements ApplicationContextAware {
@@ -17,18 +18,30 @@ public class Localizable implements ApplicationContextAware {
         messageSourceAccessor = new MessageSourceAccessor(applicationContext);
     }
 
+    /**
+     * Search in resource bundle by code.
+     */
     public String t(String code) {
         return messageSourceAccessor.getMessage(code);
     }
 
+    /**
+     * Search in resource bundle by code with arguments.
+     */
     public String t(String code, Object... args) {
         return messageSourceAccessor.getMessage(code, args);
     }
 
+    /**
+     * Search in resource bundle by code in {@link LocalizableValue#getTranslationTag()}.
+     */
     public String t(LocalizableValue localizableValue) {
         return t(localizableValue.getTranslationTag());
     }
 
+    /**
+     * Search in resource bundle by code in {@link LocalizableValue#getTranslationTag()} with arguments.
+     */
     public String t(LocalizableValue localizableValue, Object... args) {
         return t(localizableValue.getTranslationTag(), args);
     }

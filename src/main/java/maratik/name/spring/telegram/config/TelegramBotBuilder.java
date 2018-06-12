@@ -1,6 +1,7 @@
 package maratik.name.spring.telegram.config;
 
 /**
+ * Builder for Telegram Bot API. Should be provided as bean.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramBotBuilder {
@@ -20,23 +21,33 @@ public class TelegramBotBuilder {
         this.token = token;
     }
 
+    /**
+     * Bot username.
+     */
     public TelegramBotBuilder username(String username) {
         this.username = username;
         return this;
     }
 
+    /**
+     * Bot token.
+     */
     public TelegramBotBuilder token(String token) {
         this.token = token;
         return this;
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * URL path used for webhook. It is not required for long polling mode.
+     */
     public TelegramBotBuilder path(String path) {
         this.path = path;
         return this;
     }
 
-    @SuppressWarnings("unused")
+    /**
+     * Maximum parallel threads used to process messages in long polling mode.
+     */
     public TelegramBotBuilder maxThreads(int maxThreads) {
         this.maxThreads = maxThreads;
         return this;

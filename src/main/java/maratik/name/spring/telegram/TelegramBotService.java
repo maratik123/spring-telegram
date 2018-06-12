@@ -35,6 +35,7 @@ import java.util.stream.Stream;
 import static maratik.name.spring.telegram.util.Util.optionalOf;
 
 /**
+ * Telegram Bot Service.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -93,6 +94,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         this(api, embeddedValueResolver, DEFAULT_PATTERN_COMMAND_SUFFIX);
     }
 
+    /**
+     * @return suffix for pattern command
+     */
     public String getPatternCommandSuffix() {
         return patternCommandSuffix;
     }
@@ -101,6 +105,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         this.patternCommandSuffix = patternCommandSuffix;
     }
 
+    /**
+     * Main dispatcher method which takes {@link Update} object and calls controller method to process update.
+     */
     @SuppressWarnings("WeakerAccess")
     public Optional<BotApiMethod<?>> updateProcess(Update update) {
         logger.debug("Update {} received", update);
@@ -187,6 +194,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         return sb.toString();
     }
 
+    /**
+     * Enumerates all visible command handlers for given user.
+     */
     @SuppressWarnings("WeakerAccess")
     public Stream<TelegramBotCommand> getCommandList(OptionalLong userKey) {
         return Stream.concat(
@@ -205,6 +215,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         );
     }
 
+    /**
+     * @return telegram api client implementation
+     */
     public abstract DefaultAbsSender getClient();
 
     private Object[] makeArgumentList(Method method, TelegramMessageCommand telegramMessageCommand, Update update) {
@@ -214,6 +227,9 @@ public abstract class TelegramBotService implements AutoCloseable {
             .toArray();
     }
 
+    /**
+     * Add {@link TelegramCommand} handler.
+     */
     @SuppressWarnings("WeakerAccess")
     public void addHandler(Object bean, Method method, OptionalLong userId) {
         TelegramCommand command = AnnotatedElementUtils.findMergedAnnotation(method, TelegramCommand.class);
@@ -230,11 +246,17 @@ public abstract class TelegramBotService implements AutoCloseable {
         }
     }
 
+    /**
+     * Add {@link maratik.name.spring.telegram.annotation.TelegramMessage} handler.
+     */
     @SuppressWarnings("WeakerAccess")
     public void addDefaultMessageHandler(Object bean, Method method, OptionalLong userId) {
         createOrGet(userId).setDefaultMessageHandler(new TelegramHandler(bean, method, null));
     }
 
+    /**
+     * Add {@link TelegramForward} handler.
+     */
     @SuppressWarnings("WeakerAccess")
     public void addForwardMessageHandler(Object bean, Method method, OptionalLong userId) {
         TelegramForward forward = AnnotatedElementUtils.findMergedAnnotation(method, TelegramForward.class);
@@ -258,6 +280,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         }
     }
 
+    /**
+     * Add help method for {@code userKey}.
+     */
     @SuppressWarnings("WeakerAccess")
     public void addHelpMethod(OptionalLong userKey) {
         try {
@@ -274,6 +299,9 @@ public abstract class TelegramBotService implements AutoCloseable {
         }
     }
 
+    /**
+     * Default help method.
+     */
     @SuppressWarnings("WeakerAccess")
     @TelegramCommand(
         commands = "/help",
@@ -287,10 +315,13 @@ public abstract class TelegramBotService implements AutoCloseable {
     public void close() {
     }
 
+    /**
+     * Handler for {@link maratik.name.spring.telegram.annotation.TelegramHelp} method.
+     */
     @SuppressWarnings("WeakerAccess")
     public void addHelpPrefixMethod(Object bean, Method method, OptionalLong userId) {
         try {
-            createOrGet(userId).setPrefixHelpMessage((String) method.invoke(bean));
+            createOrGet(userId).setPrefixHelpMessage(method.invoke(bean).toString());
         } catch (Exception e) {
             logger.error("Can not get help prefix", e);
         }

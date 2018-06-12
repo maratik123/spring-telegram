@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.OptionalLong;
 
 /**
+ * Bean Post Processor from Telegram Bot API.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

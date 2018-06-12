@@ -10,6 +10,7 @@ import java.util.OptionalLong;
 import static maratik.name.spring.telegram.util.Util.optionalOf;
 
 /**
+ * Telegram bot command splitted by command and arguments.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramMessageCommand {
@@ -42,18 +43,30 @@ public class TelegramMessageCommand {
             .orElse(null);
     }
 
+    /**
+     * Current command received from user.
+     */
     public Optional<String> getCommand() {
         return Optional.ofNullable(command);
     }
 
+    /**
+     * Command arguments.
+     */
     public Optional<String> getArgument() {
         return Optional.ofNullable(argument);
     }
 
+    /**
+     * {@code true} if current message is command.
+     */
     public boolean isCommand() {
         return isCommand;
     }
 
+    /**
+     * User ID, from whom this forward is originated.
+     */
     public OptionalLong getForwardedFrom() {
         return optionalOf(forwardedFrom);
     }

@@ -6,6 +6,7 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 
 /**
+ * Telegram Bot command handler descriptor.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramHandler {
@@ -19,14 +20,23 @@ public class TelegramHandler {
         this.telegramCommand = telegramCommand;
     }
 
+    /**
+     * Bean which contains handler.
+     */
     public Object getBean() {
         return bean;
     }
 
+    /**
+     * Method which processes command
+     */
     public Method getMethod() {
         return method;
     }
 
+    /**
+     * TelegramCommand annotation for this method.
+     */
     public Optional<TelegramCommand> getTelegramCommand() {
         return Optional.ofNullable(telegramCommand);
     }

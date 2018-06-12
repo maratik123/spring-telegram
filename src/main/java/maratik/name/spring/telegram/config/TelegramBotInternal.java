@@ -10,6 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Internal qualifier for bot api beans to not clash with user's beans.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER, ElementType.TYPE, ElementType.ANNOTATION_TYPE})

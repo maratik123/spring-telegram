@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Return of this method will be prefixed to /help command. {@link Object#toString()} will be used on return.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Target(ElementType.METHOD)

@@ -11,6 +11,7 @@ import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.exceptions.TelegramApiRequestException;
 
 /**
+ * Webhook implementation of Telegram Bot Service.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class WebhookTelegramBotService extends TelegramBotService {

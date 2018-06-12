@@ -8,6 +8,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * Default message handler.
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Retention(RetentionPolicy.RUNTIME)
