@@ -2,6 +2,7 @@ package name.maratik.spring.telegram.config;
 
 import name.maratik.spring.telegram.TelegramBeanPostProcessor;
 import name.maratik.spring.telegram.TelegramBotService;
+
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.context.annotation.Bean;

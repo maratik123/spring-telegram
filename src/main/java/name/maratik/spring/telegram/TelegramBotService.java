@@ -1,17 +1,16 @@
 package name.maratik.spring.telegram;
 
+import name.maratik.spring.telegram.annotation.TelegramCommand;
 import name.maratik.spring.telegram.annotation.TelegramForward;
 import name.maratik.spring.telegram.annotation.TelegramHelp;
 import name.maratik.spring.telegram.annotation.TelegramMessage;
 import name.maratik.spring.telegram.model.TelegramBotCommand;
+import name.maratik.spring.telegram.model.TelegramHandler;
 import name.maratik.spring.telegram.model.TelegramMessageCommand;
 import name.maratik.spring.telegram.util.Util;
 
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
-import name.maratik.spring.telegram.annotation.TelegramCommand;
-import name.maratik.spring.telegram.model.TelegramHandler;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
@@ -36,8 +35,6 @@ import java.util.Optional;
 import java.util.OptionalLong;
 import java.util.function.BiFunction;
 import java.util.stream.Stream;
-
-import static name.maratik.spring.telegram.util.Util.optionalOf;
 
 /**
  * Telegram Bot Service.
