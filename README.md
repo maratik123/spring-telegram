@@ -4,35 +4,35 @@ Spring Controllers for Telegram API (with multithreaded support).
 ## Add to your project
 ### Maven
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repositories>
+    <repository>
+        <id>jitpack.io</id>
+        <url>https://jitpack.io</url>
+    </repository>
+</repositories>
 ```
 
 ```xml
-	<dependency>
-	    <groupId>com.github.maratik123</groupId>
-	    <artifactId>spring-telegram</artifactId>
-	    <version>1.4</version>
-	</dependency>
+<dependency>
+    <groupId>com.github.maratik123</groupId>
+    <artifactId>spring-telegram</artifactId>
+    <version>1.4</version>
+</dependency>
 ```
 ### Gradle
 ```groovy
-	allprojects {
-		repositories {
-			...
-			maven { url 'https://jitpack.io' }
-		}
-	}
+allprojects {
+    repositories {
+        ...
+        maven { url 'https://jitpack.io' }
+    }
+}
 ```
 
 ```groovy
-	dependencies {
-		implementation 'com.github.maratik123:spring-telegram:1.4'
-	}
+dependencies {
+    implementation 'com.github.maratik123:spring-telegram:1.4'
+}
 ```
 ## Setup project
 ### Create TelegramBot
