@@ -1,6 +1,8 @@
 # spring-telegram
 Spring Controllers for Telegram API (with multithreaded support).
 
+[![Jitpack](https://jitpack.io/v/maratik123/spring-telegram.svg)](https://jitpack.io/#maratik123/spring-telegram)
+
 ## Add to your project
 ### Maven
 ```xml
