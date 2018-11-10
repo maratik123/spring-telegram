@@ -5,7 +5,7 @@ import name.maratik.spring.telegram.TelegramBotService;
 import name.maratik.spring.telegram.WebhookTelegramBotService;
 
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
-import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.meta.TelegramBotsApi;
 
 /**
  * Telegram Bot type.

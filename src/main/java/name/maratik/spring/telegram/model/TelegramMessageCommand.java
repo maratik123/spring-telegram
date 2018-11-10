@@ -2,9 +2,9 @@ package name.maratik.spring.telegram.model;
 
 import name.maratik.spring.telegram.util.Util;
 
-import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.api.objects.User;
+import org.telegram.telegrambots.meta.api.objects.Message;
+import org.telegram.telegrambots.meta.api.objects.Update;
+import org.telegram.telegrambots.meta.api.objects.User;
 
 import java.util.Optional;
 import java.util.OptionalLong;
