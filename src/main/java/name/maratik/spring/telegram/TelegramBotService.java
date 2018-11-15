@@ -5,6 +5,7 @@ import name.maratik.spring.telegram.annotation.TelegramCommand;
 import name.maratik.spring.telegram.annotation.TelegramForward;
 import name.maratik.spring.telegram.annotation.TelegramHelp;
 import name.maratik.spring.telegram.annotation.TelegramMessage;
+import name.maratik.spring.telegram.model.CallbackQueryId;
 import name.maratik.spring.telegram.model.TelegramBotCommand;
 import name.maratik.spring.telegram.model.TelegramHandler;
 import name.maratik.spring.telegram.model.TelegramMessageCommand;
@@ -120,6 +121,7 @@ public abstract class TelegramBotService implements AutoCloseable {
             .put(User.class, update -> update.getCallbackQuery().getFrom())
             .put(long.class, callbackQueryUserIdExtractor)
             .put(Long.class, callbackQueryUserIdExtractor)
+            .put(CallbackQueryId.class, update -> new CallbackQueryId(update.getCallbackQuery().getId()))
             .build();
 
     }
