@@ -1,5 +1,6 @@
 package name.maratik.spring.telegram;
 
+import name.maratik.spring.telegram.annotation.TelegramCallbackQuery;
 import name.maratik.spring.telegram.annotation.TelegramCommand;
 import name.maratik.spring.telegram.annotation.TelegramForward;
 import name.maratik.spring.telegram.annotation.TelegramHelp;
@@ -9,6 +10,7 @@ import name.maratik.spring.telegram.model.TelegramHandler;
 import name.maratik.spring.telegram.model.TelegramMessageCommand;
 import name.maratik.spring.telegram.util.Util;
 
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.logging.log4j.LogManager;
@@ -19,21 +21,27 @@ import org.telegram.telegrambots.bots.DefaultAbsSender;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
+import org.telegram.telegrambots.meta.api.objects.CallbackQuery;
 import org.telegram.telegrambots.meta.api.objects.Message;
 import org.telegram.telegrambots.meta.api.objects.Update;
 import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.time.Instant;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
+import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
+import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 /**
@@ -54,7 +62,9 @@ public abstract class TelegramBotService implements AutoCloseable {
 
     private final Map<OptionalLong, Handlers> handlers = new HashMap<>();
     private final EmbeddedValueResolver embeddedValueResolver;
-    private final Map<Type, BiFunction<TelegramMessageCommand, Update, ?>> argumentMapper;
+    private final List<ProcessorDescriptor> processors;
+    private final Map<Type, BiFunction<TelegramMessageCommand, Update, ?>> messageArgumentMapper;
+    private final Map<Type, Function<Update, ?>> callbackQueryArgumentMapper;
 
     private String patternCommandSuffix = DEFAULT_PATTERN_COMMAND_SUFFIX;
 
@@ -71,10 +81,18 @@ public abstract class TelegramBotService implements AutoCloseable {
         this.patternCommandSuffix = patternCommandSuffix;
         this.embeddedValueResolver = embeddedValueResolver;
 
-        BiFunction<TelegramMessageCommand, Update, Long> userIdExtractor = (telegramMessageCommand, update) ->
+        BiFunction<TelegramMessageCommand, Update, Long> messageUserIdExtractor = (telegramMessageCommand, update) ->
             update.getMessage().getFrom().getId().longValue();
 
-        argumentMapper = ImmutableMap.<Type, BiFunction<TelegramMessageCommand, Update, ?>>builder()
+        Function<Update, Long> callbackQueryUserIdExtractor = update ->
+            update.getCallbackQuery().getFrom().getId().longValue();
+
+        processors = ImmutableList.of(
+            new ProcessorDescriptor(Update::hasMessage, this::messageProcess),
+            new ProcessorDescriptor(Update::hasCallbackQuery, this::callbackQueryProcess)
+        );
+
+        messageArgumentMapper = ImmutableMap.<Type, BiFunction<TelegramMessageCommand, Update, ?>>builder()
             .put(Update.class, (telegramMessageCommand, update) -> update)
             .put(TelegramMessageCommand.class, (telegramMessageCommand, update) -> telegramMessageCommand)
             .put(String.class, (telegramMessageCommand, update) -> telegramMessageCommand.getArgument().orElse(null))
@@ -83,13 +101,27 @@ public abstract class TelegramBotService implements AutoCloseable {
             .put(DefaultAbsSender.class, (telegramMessageCommand, update) -> getClient())
             .put(Message.class, (telegramMessageCommand, update) -> update.getMessage())
             .put(User.class, (telegramMessageCommand, update) -> update.getMessage().getFrom())
-            .put(long.class, userIdExtractor)
-            .put(Long.class, userIdExtractor)
+            .put(long.class, messageUserIdExtractor)
+            .put(Long.class, messageUserIdExtractor)
             .put(Instant.class, ((telegramMessageCommand, update) -> {
                 Message message = update.getMessage();
                 return Instant.ofEpochSecond(Optional.ofNullable(message.getForwardDate()).orElse(message.getDate()));
             }))
             .build();
+
+        callbackQueryArgumentMapper = ImmutableMap.<Type, Function<Update, ?>>builder()
+            .put(Update.class, update -> update)
+            .put(String.class, update -> update.getCallbackQuery().getData())
+            .put(TelegramBotsApi.class, update -> api)
+            .put(TelegramBotService.class, update -> this)
+            .put(DefaultAbsSender.class, update -> getClient())
+            .put(CallbackQuery.class, Update::getCallbackQuery)
+            .put(Message.class, update -> update.getCallbackQuery().getMessage())
+            .put(User.class, update -> update.getCallbackQuery().getFrom())
+            .put(long.class, callbackQueryUserIdExtractor)
+            .put(Long.class, callbackQueryUserIdExtractor)
+            .build();
+
     }
 
     public TelegramBotService(TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver) {
@@ -113,9 +145,27 @@ public abstract class TelegramBotService implements AutoCloseable {
     @SuppressWarnings("WeakerAccess")
     public Optional<BotApiMethod<?>> updateProcess(Update update) {
         logger.debug("Update {} received", update);
-        if (update.getMessage() == null) {
-            return Optional.empty();
-        }
+        return processors.stream()
+            .filter(processorDescriptor -> processorDescriptor.test(update))
+            .findFirst()
+            .flatMap(processorDescriptor -> processorDescriptor.apply(update));
+    }
+
+    private Optional<BotApiMethod<?>> callbackQueryProcess(Update update) {
+        return Optional.ofNullable(getOrDefault(Util.optionalOf(update
+            .getCallbackQuery()
+            .getFrom()
+            .getId()
+            .longValue()
+        ))
+            .getDefaultCallbackQueryHandler()
+        ).flatMap(handler -> handleExceptions(
+            () -> processHandler(handler, makeCallbackQueryArgumentList(handler.getMethod(), update)),
+            update
+        ));
+    }
+
+    private Optional<BotApiMethod<?>> messageProcess(Update update) {
         TelegramMessageCommand command = new TelegramMessageCommand(update);
         Optional<TelegramHandler> optionalCommandHandler;
         OptionalLong userKey = Util.optionalOf(update.getMessage().getChatId());
@@ -146,33 +196,42 @@ public abstract class TelegramBotService implements AutoCloseable {
 
         logger.debug("Command handler: {}", optionalCommandHandler);
 
-        return optionalCommandHandler.flatMap(commandHandler -> {
-            try {
-                Method method = commandHandler.getMethod();
-                Object[] arguments = makeArgumentList(method, command, update);
-
-                if (commandHandler.getTelegramCommand().filter(TelegramCommand::isHelp).isPresent()) {
-                    sendHelpList(update, userKey);
-                } else {
-                    Class<?> methodReturnType = method.getReturnType();
-                    logger.debug("Derived method return type: {}", methodReturnType);
-                    if (methodReturnType == void.class || methodReturnType == Void.class) {
-                        method.invoke(commandHandler.getBean(), arguments);
-                    } else if (methodReturnType != null &&
-                        BotApiMethod.class.isAssignableFrom(methodReturnType)) {
-                        return Optional.ofNullable((BotApiMethod<?>) method.invoke(commandHandler.getBean(), arguments));
-                    } else {
-                        logger.error("Unsupported handler '{}'", commandHandler);
-                    }
-                }
-            } catch (Exception e) {
-                logger.error("Could not process update: {}", update, e);
+        return optionalCommandHandler.flatMap(commandHandler -> handleExceptions(() -> {
+            if (commandHandler.getTelegramCommand().filter(TelegramCommand::isHelp).isPresent()) {
+                sendHelpList(update, userKey);
+                return Optional.empty();
             }
-            return Optional.empty();
-        });
+            return processHandler(commandHandler, makeMessageArgumentList(
+                commandHandler.getMethod(), command, update
+            ));
+        }, update));
     }
 
-    private void sendHelpList(Update update, OptionalLong userKey) throws TelegramApiException {
+    private static <T> Optional<T> handleExceptions(Callable<Optional<T>> callable, Update update) {
+        try {
+            return callable.call();
+        } catch (Exception e) {
+            logger.error("Could not process update: {}", update, e);
+            return Optional.empty();
+        }
+    }
+
+    private Optional<BotApiMethod<?>> processHandler(TelegramHandler commandHandler, Object[] arguments) throws IllegalAccessException, InvocationTargetException {
+        Method method = commandHandler.getMethod();
+        Class<?> methodReturnType = method.getReturnType();
+        logger.debug("Derived method return type: {}", methodReturnType);
+        if (methodReturnType == void.class || methodReturnType == Void.class) {
+            method.invoke(commandHandler.getBean(), arguments);
+        } else if (methodReturnType != null &&
+            BotApiMethod.class.isAssignableFrom(methodReturnType)) {
+            return Optional.ofNullable((BotApiMethod<?>) method.invoke(commandHandler.getBean(), arguments));
+        } else {
+            logger.error("Unsupported handler '{}'", commandHandler);
+        }
+        return Optional.empty();
+    }
+
+    private <T> void sendHelpList(Update update, OptionalLong userKey) throws TelegramApiException {
         getClient().execute(new SendMessage()
             .setChatId(update.getMessage().getChatId())
             .setText(buildHelpMessage(userKey))
@@ -222,10 +281,17 @@ public abstract class TelegramBotService implements AutoCloseable {
      */
     public abstract DefaultAbsSender getClient();
 
-    private Object[] makeArgumentList(Method method, TelegramMessageCommand telegramMessageCommand, Update update) {
+    private Object[] makeMessageArgumentList(Method method, TelegramMessageCommand telegramMessageCommand, Update update) {
         return Arrays.stream(method.getGenericParameterTypes())
-            .map(type -> argumentMapper.getOrDefault(type, (t, u) -> null))
+            .map(type -> messageArgumentMapper.getOrDefault(type, (t, u) -> null))
             .map(mapper -> mapper.apply(telegramMessageCommand, update))
+            .toArray();
+    }
+
+    private Object[] makeCallbackQueryArgumentList(Method method, Update update) {
+        return Arrays.stream(method.getGenericParameterTypes())
+            .map(type -> callbackQueryArgumentMapper.getOrDefault(type, u -> null))
+            .map(mapper -> mapper.apply(update))
             .toArray();
     }
 
@@ -254,6 +320,14 @@ public abstract class TelegramBotService implements AutoCloseable {
     @SuppressWarnings("WeakerAccess")
     public void addDefaultMessageHandler(Object bean, Method method, OptionalLong userId) {
         createOrGet(userId).setDefaultMessageHandler(new TelegramHandler(bean, method, null));
+    }
+
+    /**
+     * Add {@link TelegramCallbackQuery} handler.
+     */
+    @SuppressWarnings("WeakerAccess")
+    public void addDefaultCallbackQueryHandler(Object bean, Method method, OptionalLong userId) {
+        createOrGet(userId).setDefaultCallbackQueryHandler(new TelegramHandler(bean, method, null));
     }
 
     /**
@@ -346,6 +420,7 @@ public abstract class TelegramBotService implements AutoCloseable {
         private final Map<Long, TelegramHandler> forwardHandlerList = new HashMap<>();
         private TelegramHandler defaultMessageHandler;
         private TelegramHandler defaultForwardHandler;
+        private TelegramHandler defaultCallbackQueryHandler;
         private String prefixHelpMessage;
 
         private Map<String, TelegramHandler> getCommandList() {
@@ -368,6 +443,14 @@ public abstract class TelegramBotService implements AutoCloseable {
             this.defaultMessageHandler = defaultMessageHandler;
         }
 
+        private TelegramHandler getDefaultCallbackQueryHandler() {
+            return defaultCallbackQueryHandler;
+        }
+
+        private void setDefaultCallbackQueryHandler(TelegramHandler defaultCallbackQueryHandler) {
+            this.defaultCallbackQueryHandler = defaultCallbackQueryHandler;
+        }
+
         private TelegramHandler getDefaultForwardHandler() {
             return defaultForwardHandler;
         }
@@ -382,6 +465,26 @@ public abstract class TelegramBotService implements AutoCloseable {
 
         private void setPrefixHelpMessage(String prefixHelpMessage) {
             this.prefixHelpMessage = prefixHelpMessage;
+        }
+    }
+
+    private static class ProcessorDescriptor implements Predicate<Update>, Function<Update, Optional<BotApiMethod<?>>> {
+        private final Predicate<Update> predicate;
+        private final Function<Update, Optional<BotApiMethod<?>>> function;
+
+        private ProcessorDescriptor(Predicate<Update> predicate, Function<Update, Optional<BotApiMethod<?>>> function) {
+            this.predicate = predicate;
+            this.function = function;
+        }
+
+        @Override
+        public Optional<BotApiMethod<?>> apply(Update update) {
+            return function.apply(update);
+        }
+
+        @Override
+        public boolean test(Update update) {
+            return predicate.test(update);
         }
     }
 }

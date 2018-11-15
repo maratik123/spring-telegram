@@ -1,6 +1,7 @@
 package name.maratik.spring.telegram;
 
 import name.maratik.spring.telegram.annotation.TelegramBot;
+import name.maratik.spring.telegram.annotation.TelegramCallbackQuery;
 import name.maratik.spring.telegram.annotation.TelegramCommand;
 import name.maratik.spring.telegram.annotation.TelegramForward;
 import name.maratik.spring.telegram.annotation.TelegramHelp;
@@ -98,6 +99,9 @@ public class TelegramBeanPostProcessor implements BeanPostProcessor {
                 if (AnnotatedElementUtils.hasAnnotation(method, TelegramHelp.class)) {
                     bindHelpPrefix(bean, method, userId);
                 }
+                if (AnnotatedElementUtils.hasAnnotation(method, TelegramCallbackQuery.class)) {
+                    bindCallbackQueryController(bean, method, userId);
+                }
             }
         }
         telegramBotService.addHelpMethod(userId);
@@ -108,6 +112,13 @@ public class TelegramBeanPostProcessor implements BeanPostProcessor {
             bean::getClass, method::getName, () -> userId
         );
         telegramBotService.addDefaultMessageHandler(bean, method, userId);
+    }
+
+    private void bindCallbackQueryController(Object bean, Method method, OptionalLong userId) {
+        logger.info("Init TelegramBot callback query controller: {}:{} for {}",
+            bean::getClass, method::getName, () -> userId
+        );
+        telegramBotService.addDefaultCallbackQueryHandler(bean, method, userId);
     }
 
     private void bindCommandController(Object bean, Method method, OptionalLong userId) {

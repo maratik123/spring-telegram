@@ -18,14 +18,14 @@ Spring Controllers for Telegram API (with multithreaded support).
 <dependency>
     <groupId>com.github.maratik123</groupId>
     <artifactId>spring-telegram</artifactId>
-    <version>1.10</version>
+    <version>2.1</version>
 </dependency>
 ```
 ### Gradle
 ```groovy
 allprojects {
     repositories {
-        ...
+        // ...
         maven { url 'https://jitpack.io' }
     }
 }
@@ -33,7 +33,7 @@ allprojects {
 
 ```groovy
 dependencies {
-    implementation 'com.github.maratik123:spring-telegram:1.10'
+    implementation 'com.github.maratik123:spring-telegram:2.1'
 }
 ```
 ## Setup project
