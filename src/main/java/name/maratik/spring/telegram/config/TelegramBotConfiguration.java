@@ -4,7 +4,6 @@ import name.maratik.spring.telegram.TelegramBeanPostProcessor;
 import name.maratik.spring.telegram.TelegramBotService;
 
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ImportAware;
 import org.springframework.core.type.AnnotationMetadata;
@@ -14,6 +13,7 @@ import org.telegram.telegrambots.meta.TelegramBotsApi;
 
 /**
  * Configuration which will be used to initialize telegram bot api.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramBotConfiguration implements ImportAware {
@@ -26,9 +26,9 @@ public class TelegramBotConfiguration implements ImportAware {
      */
     @Bean
     public TelegramBeanPostProcessor telegramBeanPostProcessor(
-        TelegramBotService telegramBotService, @TelegramBotInternal EmbeddedValueResolver embeddedValueResolver
+        TelegramBotService telegramBotService, ConfigurableBeanFactory configurableBeanFactory
     ) {
-        return new TelegramBeanPostProcessor(telegramBotService, embeddedValueResolver);
+        return new TelegramBeanPostProcessor(telegramBotService, configurableBeanFactory);
     }
 
     /**
@@ -37,9 +37,9 @@ public class TelegramBotConfiguration implements ImportAware {
     @Bean
     public TelegramBotService telegramBotService(
         TelegramBotType telegramBotType, TelegramBotBuilder telegramBotBuilder, TelegramBotsApi api,
-        @TelegramBotInternal EmbeddedValueResolver embeddedValueResolver
+        ConfigurableBeanFactory configurableBeanFactory
     ) {
-        return telegramBotType.createService(telegramBotBuilder, api, embeddedValueResolver);
+        return telegramBotType.createService(telegramBotBuilder, api, configurableBeanFactory);
     }
 
     /**
@@ -49,16 +49,5 @@ public class TelegramBotConfiguration implements ImportAware {
     public TelegramBotsApi telegramBotsApi() {
         ApiContextInitializer.init();
         return new TelegramBotsApi();
-    }
-
-    /**
-     * Internal value resolver to support value processing using properties sources and SPeL.
-     */
-    @Bean
-    @TelegramBotInternal
-    public EmbeddedValueResolver internalTelegramApiEmbeddedValueResolver(
-        ConfigurableBeanFactory configurableBeanFactory
-    ) {
-        return new EmbeddedValueResolver(configurableBeanFactory);
     }
 }

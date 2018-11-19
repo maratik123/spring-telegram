@@ -11,6 +11,7 @@ import java.util.OptionalLong;
 
 /**
  * Telegram bot command splitted by command and arguments.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramMessageCommand {

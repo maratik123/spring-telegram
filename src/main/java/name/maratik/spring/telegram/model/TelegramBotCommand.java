@@ -2,6 +2,7 @@ package name.maratik.spring.telegram.model;
 
 /**
  * Telegram bot command descriptor.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramBotCommand {

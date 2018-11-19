@@ -7,6 +7,7 @@ import java.util.Optional;
 
 /**
  * Telegram Bot command handler descriptor.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramHandler {

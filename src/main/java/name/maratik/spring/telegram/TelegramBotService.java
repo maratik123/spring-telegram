@@ -16,6 +16,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.collect.ImmutableSet;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.telegram.telegrambots.bots.DefaultAbsSender;
@@ -47,6 +48,7 @@ import java.util.stream.Stream;
 
 /**
  * Telegram Bot Service.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -70,17 +72,16 @@ public abstract class TelegramBotService implements AutoCloseable {
     private String patternCommandSuffix = DEFAULT_PATTERN_COMMAND_SUFFIX;
 
     /**
-     *
-     * @param api initialized telegram bots api
-     * @param embeddedValueResolver properties and SPeL resolver
-     * @param patternCommandSuffix suffix for commands starts with {@code /do_some_*}.
-     *                            Default value is {@link TelegramBotService#DEFAULT_PATTERN_COMMAND_SUFFIX}
+     * @param api                     initialized telegram bots api
+     * @param configurableBeanFactory to configure properties and SPeL resolver
+     * @param patternCommandSuffix    suffix for commands starts with {@code /do_some_*}.
+     *                                Default value is {@link TelegramBotService#DEFAULT_PATTERN_COMMAND_SUFFIX}
      */
     public TelegramBotService(
-        TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver, String patternCommandSuffix
+        TelegramBotsApi api, ConfigurableBeanFactory configurableBeanFactory, String patternCommandSuffix
     ) {
         this.patternCommandSuffix = patternCommandSuffix;
-        this.embeddedValueResolver = embeddedValueResolver;
+        embeddedValueResolver = new EmbeddedValueResolver(configurableBeanFactory);
 
         BiFunction<TelegramMessageCommand, Update, Long> messageUserIdExtractor = (telegramMessageCommand, update) ->
             update.getMessage().getFrom().getId().longValue();
@@ -126,8 +127,8 @@ public abstract class TelegramBotService implements AutoCloseable {
 
     }
 
-    public TelegramBotService(TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver) {
-        this(api, embeddedValueResolver, DEFAULT_PATTERN_COMMAND_SUFFIX);
+    public TelegramBotService(TelegramBotsApi api, ConfigurableBeanFactory configurableBeanFactory) {
+        this(api, configurableBeanFactory, DEFAULT_PATTERN_COMMAND_SUFFIX);
     }
 
     /**
@@ -155,12 +156,12 @@ public abstract class TelegramBotService implements AutoCloseable {
 
     private Optional<BotApiMethod<?>> callbackQueryProcess(Update update) {
         return Optional.ofNullable(getOrDefault(Util.optionalOf(update
-            .getCallbackQuery()
-            .getFrom()
-            .getId()
-            .longValue()
-        ))
-            .getDefaultCallbackQueryHandler()
+                .getCallbackQuery()
+                .getFrom()
+                .getId()
+                .longValue()
+            ))
+                .getDefaultCallbackQueryHandler()
         ).flatMap(handler -> handleExceptions(
             () -> processHandler(handler, makeCallbackQueryArgumentList(handler.getMethod(), update)),
             update

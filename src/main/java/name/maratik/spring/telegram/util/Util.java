@@ -6,6 +6,7 @@ import java.util.OptionalLong;
 
 /**
  * Various utils.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")

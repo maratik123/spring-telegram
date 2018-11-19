@@ -12,6 +12,7 @@ import java.lang.annotation.Target;
 
 /**
  * Indicates that annotated class is Telegram Bot Controller.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Target(ElementType.TYPE)

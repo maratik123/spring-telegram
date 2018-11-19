@@ -11,6 +11,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.BeanPostProcessor;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.beans.factory.config.EmbeddedValueResolver;
 import org.springframework.core.annotation.AnnotatedElementUtils;
 import org.springframework.lang.NonNull;
@@ -24,6 +25,7 @@ import java.util.OptionalLong;
 
 /**
  * Bean Post Processor from Telegram Bot API.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @SuppressWarnings("OptionalUsedAsFieldOrParameterType")
@@ -37,10 +39,10 @@ public class TelegramBeanPostProcessor implements BeanPostProcessor {
     private final EmbeddedValueResolver embeddedValueResolver;
 
     public TelegramBeanPostProcessor(
-        TelegramBotService telegramBotService, EmbeddedValueResolver embeddedValueResolver
+        TelegramBotService telegramBotService, ConfigurableBeanFactory configurableBeanFactory
     ) {
         this.telegramBotService = telegramBotService;
-        this.embeddedValueResolver = embeddedValueResolver;
+        embeddedValueResolver = new EmbeddedValueResolver(configurableBeanFactory);
     }
 
     @Override
@@ -80,7 +82,7 @@ public class TelegramBeanPostProcessor implements BeanPostProcessor {
     private void bindControllers(@NonNull Object bean, String beanName, Class<?> original, OptionalLong userId) {
         if (original != null) {
             logger.info("Processing class {} as bean {} for user {}",
-                bean::getClass,  () -> beanName, () -> userId
+                bean::getClass, () -> beanName, () -> userId
             );
             for (Method method : original.getMethods()) {
                 if (!Modifier.isPublic(method.getModifiers())) {

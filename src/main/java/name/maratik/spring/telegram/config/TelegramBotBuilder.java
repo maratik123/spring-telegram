@@ -2,6 +2,7 @@ package name.maratik.spring.telegram.config;
 
 /**
  * Builder for Telegram Bot API. Should be provided as bean.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class TelegramBotBuilder {

@@ -13,6 +13,7 @@ import java.lang.annotation.Target;
 
 /**
  * Enable Telegram Bot annotations processing.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Retention(RetentionPolicy.RUNTIME)

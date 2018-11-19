@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 
 /**
  * Telegram forward message handler.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Target(ElementType.METHOD)
@@ -26,6 +27,7 @@ public @interface TelegramForward {
 
     /**
      * Accepts forwards originated only from specified user ids.
+     *
      * @return array of comma-delimited user ids
      */
     @AliasFor("value")

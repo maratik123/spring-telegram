@@ -4,7 +4,7 @@ import name.maratik.spring.telegram.config.TelegramBotBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.config.EmbeddedValueResolver;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.objects.Update;
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 /**
  * Long polling implementation of Telegram Bot Service.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class LongPollingTelegramBotService extends TelegramBotService implements AutoCloseable {
@@ -30,9 +31,9 @@ public class LongPollingTelegramBotService extends TelegramBotService implements
     private final TelegramLongPollingBot client;
 
     public LongPollingTelegramBotService(
-        TelegramBotBuilder botBuilder, TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver
+        TelegramBotBuilder botBuilder, TelegramBotsApi api, ConfigurableBeanFactory configurableBeanFactory
     ) {
-        super(api, embeddedValueResolver);
+        super(api, configurableBeanFactory);
         logger.info("Registering Long Polling with {}", botBuilder);
         username = botBuilder.getUsername();
         token = botBuilder.getToken();

@@ -8,6 +8,7 @@ import org.springframework.lang.NonNull;
 
 /**
  * Helper is used for localization. Can be inherited by user. Or used as "loc" bean solely.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class Localizable implements ApplicationContextAware {

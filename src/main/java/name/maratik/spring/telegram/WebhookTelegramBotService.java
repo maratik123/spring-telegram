@@ -4,7 +4,7 @@ import name.maratik.spring.telegram.config.TelegramBotBuilder;
 
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.springframework.beans.factory.config.EmbeddedValueResolver;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.telegram.telegrambots.bots.TelegramWebhookBot;
 import org.telegram.telegrambots.meta.TelegramBotsApi;
 import org.telegram.telegrambots.meta.api.methods.BotApiMethod;
@@ -13,6 +13,7 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 /**
  * Webhook implementation of Telegram Bot Service.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 public class WebhookTelegramBotService extends TelegramBotService {
@@ -24,9 +25,9 @@ public class WebhookTelegramBotService extends TelegramBotService {
     private final TelegramWebhookBot client;
 
     public WebhookTelegramBotService(
-        TelegramBotBuilder botBuilder, TelegramBotsApi api, EmbeddedValueResolver embeddedValueResolver
+        TelegramBotBuilder botBuilder, TelegramBotsApi api, ConfigurableBeanFactory configurableBeanFactory
     ) {
-        super(api, embeddedValueResolver);
+        super(api, configurableBeanFactory);
         username = botBuilder.getUsername();
         token = botBuilder.getToken();
         path = botBuilder.getPath();

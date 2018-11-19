@@ -11,6 +11,7 @@ import java.lang.annotation.Target;
 
 /**
  * Telegram command handler.
+ *
  * @author <a href="mailto:maratik@yandex-team.ru">Marat Bukharov</a>
  */
 @Target(ElementType.METHOD)
