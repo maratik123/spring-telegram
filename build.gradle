@@ -77,17 +77,6 @@ jacocoTestReport {
     }
 }
 
-tasks.withType(Test) {
-    testLogging {
-        events 'passed', 'skipped', 'failed'
-        exceptionFormat = 'full'
-    }
-}
-
 coveralls {
-    jacocoReportPath 'build/reports/jacoco/jacocoTestReport/jacocoTestReport.xml'
-}
-
-jacoco {
-    toolVersion = '0.8.2'
+    jacocoReportPath "${buildDir}/reports/jacoco/test/jacocoTestReport.xml"
 }
